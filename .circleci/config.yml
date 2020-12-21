@@ -1,36 +1,43 @@
 vse: &vse
-  docker:
-    - image: circleci/node:8.11.3
+   docker:
+      - image: circleci/node:8.11.3
 
 version: 2.1
 jobs:
-  build:
-    <<: *vse
-    steps:
-      - checkout
-      - run: npm install
-      - run: npm run test
-      - run: npm run build
-      - persist_to_workspace:
-         root: .
-         paths:
-            - .
+   build:
+      <<: *vse
+      steps:
+         - checkout
+         - run: npm install
+         - run: npm run test
+         - run: npm run build
+         - persist_to_workspace:
+            root: .
+            paths:
+               - .
   deploy:
-     <<: *vse
-     steps:
-        - attach_workspace:
-           at: .
-        - run:
-           command: ./node_modules/.bin/firebase deploy --token "$FIREBASE_TOKEN"
+    <<: *vse
+    docker:
+      - circleci/python:3.8.1
+    steps:
+      - attach_workspace:
+         at: .
+      - run: 
+         command: pip3 install ansible boto boto3
+                  chmod 400 ./ansible/ansible.pem
+      - run:
+         command: ansible-playbook ./ansible/ec2_deploy.yaml --user ubuntu --key-file ./ansible/ansible.pem --vault-pass-file ./ansible/group_vars/all/.pass.txt
+         environment:
+            ANSIBLE_HOST_KEY_CHECKING: False 
 
 workflows:
-  version: 2.1
-  build:
-    jobs:
-      - build
-      - deploy:
-         requires:
+   version: 2.1
+   build:
+      jobs:
+         - build
+         - deploy:
+            requires:
             - build
-         filters:
-            branches:
-               only: master
+            filters:
+               branches:
+                  only: master
