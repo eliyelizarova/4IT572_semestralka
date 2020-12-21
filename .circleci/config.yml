@@ -18,7 +18,7 @@ jobs:
    deploy:
       <<: *vse
       docker:
-         - circleci/python:3.8.1
+         - image: circleci/python:3.8.1
       steps:
          - attach_workspace:
             at: .
