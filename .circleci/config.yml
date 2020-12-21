@@ -24,6 +24,9 @@ jobs:
             at: .
          - run: pip3 install ansible boto boto3
          - run: chmod 400 ./ansible/ansible.pem
+         - add_ssh_keys:
+            fingerprints:
+            - "78:4c:f0:df:c9:85:77:18:a5:67:04:fb:c5:c6:b0:27"
          - run:
             command: ansible-playbook ./ansible/ec2_deploy.yml --user ubuntu --key-file ./ansible/ansible.pem --vault-pass-file ./ansible/group_vars/all/.pass.txt
             environment:
