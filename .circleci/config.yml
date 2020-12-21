@@ -22,9 +22,10 @@ jobs:
       steps:
          - attach_workspace:
             at: .
+         - run: pwd
+         - run: ls
          - run: 
-            command: pwd
-                     pip3 install ansible boto boto3
+            command: pip3 install ansible boto boto3
                      chmod 400 ../ansible/ansible.pem
          - run:
             command: ansible-playbook ../ansible/ec2_deploy.yaml --user ubuntu --key-file ../ansible/ansible.pem --vault-pass-file ../ansible/group_vars/all/.pass.txt
