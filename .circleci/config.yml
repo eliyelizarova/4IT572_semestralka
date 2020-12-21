@@ -26,9 +26,9 @@ jobs:
          - run: ls
          - run: 
             command: pip3 install ansible boto boto3
-                     chmod 400 ../ansible/ansible.pem
+                     chmod 400 ansible/ansible.pem
          - run:
-            command: ansible-playbook ../ansible/ec2_deploy.yaml --user ubuntu --key-file ../ansible/ansible.pem --vault-pass-file ../ansible/group_vars/all/.pass.txt
+            command: ansible-playbook ansible/ec2_deploy.yaml --user ubuntu --key-file ansible/ansible.pem --vault-pass-file ansible/group_vars/all/.pass.txt
             environment:
                ANSIBLE_HOST_KEY_CHECKING: False 
 
