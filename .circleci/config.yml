@@ -1,7 +1,9 @@
 vse: &vse
    docker:
       - image: circleci/node:8.11.3
-
+ansible: &ansible
+   docker:
+      - image: circleci/python:3.8.1
 version: 2.1
 jobs:
    build:
@@ -16,15 +18,15 @@ jobs:
             paths:
                - .
    deploy:
-      <<: *vse
-      docker:
-         - image: circleci/python:3.8.1
+      <<: *ansible
       steps:
          - attach_workspace:
             at: .
-         - run: 
-            command: pip3 install ansible boto boto3
-                     chmod 400 ./ansible/ansible.pem
+         - run: pip3 install ansible boto boto3
+         - run: chmod 400 ./ansible/ansible.pem
+         - add_ssh_keys:
+            fingerprints:
+            - "78:4c:f0:df:c9:85:77:18:a5:67:04:fb:c5:c6:b0:27"
          - run:
             command: ansible-playbook ./ansible/ec2_deploy.yml --user ubuntu --key-file ./ansible/ansible.pem --vault-pass-file ./ansible/group_vars/all/.pass.txt
             environment:
